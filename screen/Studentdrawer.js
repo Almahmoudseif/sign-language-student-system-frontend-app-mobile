@@ -15,24 +15,12 @@ const Studentdrawer = ({ route }) => {
 
   return (
     <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{ headerShown: true }}>
-      <Drawer.Screen name="Dashboard">
-        {() => <Studentdashboard user={user} />}
-      </Drawer.Screen>
-      <Drawer.Screen name="Lessons">
-        {() => <Lessonscreen user={user} />}
-      </Drawer.Screen>
-      <Drawer.Screen name="Assessments">
-        {() => <Assessmentscreen user={user} />}
-      </Drawer.Screen>
-      <Drawer.Screen name="Results">
-        {() => <Resultscreen user={user} />}
-      </Drawer.Screen>
-      <Drawer.Screen name="Profile">
-        {() => <Profilescreen user={user} />}
-      </Drawer.Screen>
-      <Drawer.Screen name="Home">
-        {() => <Homescreen user={user} />}
-      </Drawer.Screen>
+      <Drawer.Screen name="Dashboard" component={Studentdashboard} initialParams={{ user }} />
+      <Drawer.Screen name="Lessons" component={Lessonscreen} initialParams={{ user }} />
+      <Drawer.Screen name="Assessments" component={Assessmentscreen} initialParams={{ user }} />
+      <Drawer.Screen name="Results" component={Resultscreen} initialParams={{ user }} />
+      <Drawer.Screen name="Profile" component={Profilescreen} initialParams={{ user }} />
+      <Drawer.Screen name="Home" component={Homescreen} initialParams={{ user }} />
     </Drawer.Navigator>
   );
 };

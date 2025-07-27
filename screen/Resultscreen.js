@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-const Resultscreen = ({ user }) => {
+const Resultscreen = () => {
+  const route = useRoute();
+  const user = route.params?.user;
+
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://192.168.43.33:8080/api/results/student/${user?.id}`)
+    if (!user?.id) return;
+
+    fetch(`http://192.168.43.33:8080/api/results/student/${user.id}`)
       .then(res => res.json())
       .then(data => {
         setResults(data);

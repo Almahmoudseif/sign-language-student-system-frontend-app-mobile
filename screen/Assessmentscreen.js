@@ -1,11 +1,16 @@
+// screen/Assessmentscreen.js
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Assessmentscreen = ({ user }) => {
+const Assessmentscreen = () => {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const user = route.params?.user;
 
   useEffect(() => {
     if (!user?.id) return;
@@ -40,11 +45,15 @@ const Assessmentscreen = ({ user }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Mitihani</Text>
-      <FlatList
-        data={assessments}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-      />
+      {assessments.length === 0 ? (
+        <Text style={{textAlign: 'center', marginTop: 20}}>Hakuna mitihani iliyopatikana.</Text>
+      ) : (
+        <FlatList
+          data={assessments}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+        />
+      )}
     </View>
   );
 };

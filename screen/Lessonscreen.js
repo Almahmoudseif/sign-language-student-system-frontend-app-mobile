@@ -1,16 +1,32 @@
-// screen/Lessonscreen.js
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import axios from 'axios';
+import { Video } from 'expo-av';
+import { useRoute } from '@react-navigation/native';
 
-const Lessonscreen = ({ user }) => {
+const Lessonscreen = () => {
+  const route = useRoute();
+  const user = route.params?.user;
+
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    if (user && user.level) {
+      fetchLessons();
+    } else {
+      console.warn('Level ya user haipo au haijafika bado.');
+      setLoading(false);
+    }
+  }, [user]);
+
   const fetchLessons = async () => {
     try {
-      const response = await axios.get(`http://192.168.43.33:8080/api/lessons/level/${user.level}`);
+      const level = user.level.toUpperCase();
+      const url = `http://192.168.43.33:8080/api/lessons/level/${level}`;
+      console.log('Request URL:', url);
+
+      const response = await axios.get(url);
       setLessons(response.data);
     } catch (error) {
       console.error('Error fetching lessons:', error);
@@ -19,25 +35,32 @@ const Lessonscreen = ({ user }) => {
     }
   };
 
-  useEffect(() => {
-    if (user && user.level) {
-      fetchLessons();
-    }
-  }, [user]);
-
-  useEffect(() => {
-  console.log('User data:', user); // Angalia kama level ipo
-  if (user && user.level) {
-    fetchLessons();
-  }
-}, [user]);
-
-
   const renderLesson = ({ item }) => (
     <View style={styles.lessonCard}>
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.description}>{item.description}</Text>
-      {/* Unaweza kuongeza video viewer au download link hapa kama masomo yana video */}
+
+      {item.imageUrl && (
+        <Image
+          source={{ uri: `http://192.168.43.33:8080${item.imageUrl}` }}
+          style={styles.image}
+          resizeMode="contain"
+        />
+      )}
+
+      {item.videoPath ? (
+        <Video
+          source={{ uri: `http://192.168.43.33:8080/${item.videoPath}` }}
+          rate={1.0}
+          volume={1.0}
+          isMuted={false}
+          resizeMode="contain"
+          useNativeControls
+          style={styles.video}
+        />
+      ) : (
+        <Text style={styles.noVideo}>No video available.</Text>
+      )}
     </View>
   );
 
@@ -87,12 +110,29 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: '#444',
+    marginBottom: 10,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+  video: {
+    width: '100%',
+    height: 220,
+    borderRadius: 8,
   },
   noLessons: {
     fontSize: 16,
     color: '#888',
     textAlign: 'center',
     marginTop: 20,
+  },
+  noVideo: {
+    fontStyle: 'italic',
+    color: '#888',
+    marginTop: 10,
   },
   loaderContainer: {
     flex: 1,

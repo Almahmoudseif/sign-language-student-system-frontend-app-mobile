@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-const Studentdashboard = ({ user }) => {
+const Studentdashboard = () => {
+  const route = useRoute();
+  const user = route.params?.user;
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Karibu kwenye Dashboard</Text>
@@ -21,7 +25,20 @@ const Studentdashboard = ({ user }) => {
 export default Studentdashboard;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#f9f9f9' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  info: { fontSize: 18, marginBottom: 10 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#f9f9f9'
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20
+  },
+  info: {
+    fontSize: 18,
+    marginBottom: 10
+  }
 });

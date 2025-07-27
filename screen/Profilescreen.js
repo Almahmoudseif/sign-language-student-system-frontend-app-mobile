@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-const Profilescreen = ({ user }) => {
+const Profilescreen = () => {
+  const route = useRoute();
+  const user = route.params?.user;
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Taarifa za Mwanafunzi</Text>

@@ -1,57 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+// screen/Assessmentdetail.js
 
-const Assessmentdetail = ({ route }) => {
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+
+const Assessmentdetail = () => {
+  const route = useRoute();
   const { assessmentId } = route.params;
+
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://192.168.43.33:8080/api/questions/assessment/${assessmentId}`)
-      .then(res => res.json())
-      .then(data => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch(`http://192.168.43.33:8080/api/questions/assessment/${assessmentId}`);
+        const data = await response.json();
         setQuestions(data);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error loading questions:", err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchQuestions();
   }, [assessmentId]);
 
-  const renderAnswer = (answer) => (
-    <View key={answer.id} style={styles.answerContainer}>
-      <Text style={styles.answerText}>{answer.content}</Text>
-      {answer.isCorrect !== undefined && (
-        <Text style={[styles.correctTag, answer.isCorrect ? styles.correct : styles.incorrect]}>
-          {answer.isCorrect ? 'Sahihi' : 'Siyosahihi'}
-        </Text>
-      )}
-    </View>
-  );
-
-  const renderItem = ({ item }) => (
-    <View style={styles.questionContainer}>
-      <Text style={styles.questionText}>{item.content}</Text>
-      {item.answers && item.answers.length > 0 ? (
-        item.answers.map(renderAnswer)
-      ) : (
-        <Text style={styles.noAnswers}>Hakuna majibu yaliyopatikana.</Text>
-      )}
+  const renderQuestion = ({ item, index }) => (
+    <View style={styles.questionCard}>
+      <Text style={styles.questionText}>{index + 1}. {item.content}</Text>
+      {item.optionA && <Text style={styles.option}>A. {item.optionA}</Text>}
+      {item.optionB && <Text style={styles.option}>B. {item.optionB}</Text>}
+      {item.optionC && <Text style={styles.option}>C. {item.optionC}</Text>}
+      {item.optionD && <Text style={styles.option}>D. {item.optionD}</Text>}
     </View>
   );
 
   if (loading) {
-    return <ActivityIndicator size="large" color="green" style={{ marginTop: 50 }} />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="green" />
+        <Text>Inapakia maswali...</Text>
+      </View>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.noQuestions}>Hakuna maswali kwa assessment hii.</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Maswali ya Assessment</Text>
       <FlatList
         data={questions}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderItem}
-        ListEmptyComponent={<Text style={styles.noData}>Hakuna maswali kwa assessment hii.</Text>}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderQuestion}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
     </View>
   );
@@ -60,14 +70,16 @@ const Assessmentdetail = ({ route }) => {
 export default Assessmentdetail;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  questionContainer: { marginBottom: 20, backgroundColor: '#e3f2fd', padding: 15, borderRadius: 6 },
-  questionText: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  answerContainer: { paddingVertical: 6, paddingHorizontal: 10, backgroundColor: '#fff', borderRadius: 4, marginBottom: 6 },
-  answerText: { fontSize: 16 },
-  correctTag: { marginTop: 4, fontWeight: 'bold' },
-  correct: { color: 'green' },
-  incorrect: { color: 'red' },
-  noAnswers: { fontStyle: 'italic', color: '#555' },
-  noData: { textAlign: 'center', marginTop: 50, fontSize: 16, color: '#999' },
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 16 },
+  questionCard: {
+    backgroundColor: '#f1f8e9',
+    padding: 12,
+    marginBottom: 12,
+    borderRadius: 8,
+  },
+  questionText: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  option: { fontSize: 14, color: '#555', marginBottom: 4 },
+  noQuestions: { fontSize: 16, color: '#999' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });

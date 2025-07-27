@@ -1,14 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-const Homescreen = ({ user }) => {
+const Homescreen = () => {
+  const route = useRoute();
+  const user = route.params?.user;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Karibu, {user.fullName}!</Text>
-      <Text style={styles.info}>Registration Number: {user.registrationNumber}</Text>
-      <Text style={styles.info}>Email: {user.email}</Text>
-      <Text style={styles.info}>Role: {user.role}</Text>
-      {user.level && <Text style={styles.info}>Level: {user.level}</Text>}
+      <Text style={styles.title}>Karibu, {user?.fullName}!</Text>
+      <Text style={styles.info}>Registration Number: {user?.registrationNumber}</Text>
+      <Text style={styles.info}>Email: {user?.email}</Text>
+      <Text style={styles.info}>Role: {user?.role}</Text>
+      {user?.level && <Text style={styles.info}>Level: {user?.level}</Text>}
     </View>
   );
 };
@@ -19,17 +23,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
+    padding: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20
+    marginBottom: 20,
   },
   info: {
     fontSize: 16,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
 
 export default Homescreen;

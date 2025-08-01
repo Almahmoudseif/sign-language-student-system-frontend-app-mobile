@@ -24,8 +24,6 @@ const Lessonscreen = () => {
     try {
       const level = user.level.toUpperCase();
       const url = `http://192.168.43.33:8080/api/lessons/level/${level}`;
-      console.log('Request URL:', url);
-
       const response = await axios.get(url);
       setLessons(response.data);
     } catch (error) {
@@ -35,6 +33,13 @@ const Lessonscreen = () => {
     }
   };
 
+  const getMediaUrl = (path) => {
+    if (!path) return null;
+    return path.startsWith('/')
+      ? `http://192.168.43.33:8080${path}`
+      : `http://192.168.43.33:8080/${path}`;
+  };
+
   const renderLesson = ({ item }) => (
     <View style={styles.lessonCard}>
       <Text style={styles.title}>{item.title}</Text>
@@ -42,7 +47,7 @@ const Lessonscreen = () => {
 
       {item.imageUrl && (
         <Image
-          source={{ uri: `http://192.168.43.33:8080${item.imageUrl}` }}
+          source={{ uri: getMediaUrl(item.imageUrl) }}
           style={styles.image}
           resizeMode="contain"
         />
@@ -50,12 +55,9 @@ const Lessonscreen = () => {
 
       {item.videoPath ? (
         <Video
-          source={{ uri: `http://192.168.43.33:8080/${item.videoPath}` }}
-          rate={1.0}
-          volume={1.0}
-          isMuted={false}
-          resizeMode="contain"
+          source={{ uri: getMediaUrl(item.videoPath) }}
           useNativeControls
+          resizeMode="contain"
           style={styles.video}
         />
       ) : (

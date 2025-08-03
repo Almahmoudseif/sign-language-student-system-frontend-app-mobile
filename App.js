@@ -8,6 +8,7 @@ import Registerscreen from './screen/Registerscreen';
 import Studentdrawer from './screen/Studentdrawer';
 import Assessmentscreen from './screen/Assessmentscreen';
 import Assessmentdetail from './screen/Assessmentdetail';
+import Lessondetails from './screen/Lessondetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function App() {
         <Stack.Screen name="studentdrawer" component={Studentdrawer} />
         <Stack.Screen name="Assessmentscreen" component={Assessmentscreen} />
         <Stack.Screen name="Assessmentdetail" component={Assessmentdetail} />
+        <Stack.Screen name="Lessondetails" component={Lessondetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

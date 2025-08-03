@@ -1,148 +1,160 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { Video } from 'expo-av';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const Lessonscreen = () => {
-  const route = useRoute();
-  const user = route.params?.user;
-
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('images');
+
+  const navigation = useNavigation();
 
   useEffect(() => {
-    if (user && user.level) {
-      fetchLessons();
-    } else {
-      console.warn('Level ya user haipo au haijafika bado.');
-      setLoading(false);
-    }
-  }, [user]);
+    fetchLessonsByLevel('BEGINNER');
+  }, []);
 
-  const fetchLessons = async () => {
+  const fetchLessonsByLevel = async (level) => {
     try {
-      const level = user.level.toUpperCase();
-      const url = `http://192.168.43.33:8080/api/lessons/level/${level}`;
-      const response = await axios.get(url);
+      const response = await axios.get(`http://192.168.43.33:8080/api/lessons/level/${level}`);
       setLessons(response.data);
-    } catch (error) {
-      console.error('Error fetching lessons:', error);
+    } catch (err) {
+      console.error('Error fetching lessons:', err);
+      setError('Imeshindikana kupakia masomo.');
     } finally {
       setLoading(false);
     }
   };
 
-  const getMediaUrl = (path) => {
-    if (!path) return null;
-    return path.startsWith('/')
-      ? `http://192.168.43.33:8080${path}`
-      : `http://192.168.43.33:8080/${path}`;
+  // Function to navigate to Lessondetails screen with selected lesson
+  const goToDetails = (lesson) => {
+    navigation.navigate('Lessondetails', { lesson });
   };
 
-  const renderLesson = ({ item }) => (
-    <View style={styles.lessonCard}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
+  const renderImageItem = ({ item }) =>
+    item.imageUrl ? (
+      <View style={styles.card}>
+        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        <TouchableOpacity style={styles.button} onPress={() => goToDetails(item)}>
+          <Text style={styles.buttonText}>Tazama Maelezo</Text>
+        </TouchableOpacity>
+      </View>
+    ) : null;
 
-      {item.imageUrl && (
-        <Image
-          source={{ uri: getMediaUrl(item.imageUrl) }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      )}
-
-      {item.videoPath ? (
+  const renderVideoItem = ({ item }) =>
+    item.videoUrl ? (
+      <View style={styles.card}>
         <Video
-          source={{ uri: getMediaUrl(item.videoPath) }}
+          source={{ uri: item.videoUrl }}
+          style={styles.video}
           useNativeControls
           resizeMode="contain"
-          style={styles.video}
+          isLooping
         />
-      ) : (
-        <Text style={styles.noVideo}>No video available.</Text>
-      )}
-    </View>
-  );
+        <TouchableOpacity style={styles.button} onPress={() => goToDetails(item)}>
+          <Text style={styles.buttonText}>Tazama Maelezo</Text>
+        </TouchableOpacity>
+      </View>
+    ) : null;
 
   if (loading) {
+    return <ActivityIndicator size="large" color="#003366" style={styles.loader} />;
+  }
+
+  if (error) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
-        <Text>Loading lessons...</Text>
+      <View style={styles.centered}>
+        <Text style={styles.error}>{error}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {lessons.length === 0 ? (
-        <Text style={styles.noLessons}>Hakuna masomo kwa level yako kwa sasa.</Text>
-      ) : (
-        <FlatList
-          data={lessons}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderLesson}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
+    <View style={{ flex: 1 }}>
+      <View style={styles.tabs}>
+        <TouchableOpacity
+          onPress={() => setActiveTab('images')}
+          style={[styles.tabButton, activeTab === 'images' && styles.activeTab]}
+        >
+          <Text style={styles.tabText}>Picha</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setActiveTab('videos')}
+          style={[styles.tabButton, activeTab === 'videos' && styles.activeTab]}
+        >
+          <Text style={styles.tabText}>Video</Text>
+        </TouchableOpacity>
+      </View>
+
+      <FlatList
+        data={lessons}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={activeTab === 'images' ? renderImageItem : renderVideoItem}
+        contentContainerStyle={styles.list}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f2f2f2',
+  list: {
+    padding: 10,
   },
-  lessonCard: {
-    backgroundColor: '#ffffff',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  description: {
-    fontSize: 14,
-    color: '#444',
-    marginBottom: 10,
+  card: {
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 3,
   },
   image: {
     width: '100%',
-    height: 200,
-    marginBottom: 10,
-    borderRadius: 8,
+    height: 220,
   },
   video: {
     width: '100%',
     height: 220,
-    borderRadius: 8,
+    backgroundColor: '#000',
   },
-  noLessons: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginTop: 20,
+  button: {
+    backgroundColor: '#003366',
+    padding: 12,
+    alignItems: 'center',
   },
-  noVideo: {
-    fontStyle: 'italic',
-    color: '#888',
-    marginTop: 10,
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
-  loaderContainer: {
+  tabs: {
+    flexDirection: 'row',
+    backgroundColor: '#eee',
+  },
+  tabButton: {
+    padding: 12,
+    flex: 1,
+    alignItems: 'center',
+  },
+  activeTab: {
+    backgroundColor: '#cce6ff',
+  },
+  tabText: {
+    fontWeight: 'bold',
+    color: '#003366',
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  listContent: {
-    paddingBottom: 16,
+  error: {
+    color: 'red',
+    fontSize: 16,
   },
 });
 

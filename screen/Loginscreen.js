@@ -11,22 +11,33 @@ const Loginscreen = ({ navigation }) => {
       return;
     }
 
-    fetch('http://192.168.43.33:8080/api/users/login?registrationNumber=' + registrationNumber + '&password=' + password, {
-      method: 'POST'
+    fetch('http://192.168.43.33:8080/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        registrationNumber: registrationNumber,
+        password: password
+      })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Taarifa si sahihi');
+        }
+        return res.json();
+      })
       .then(data => {
         if (data && data.id) {
           Alert.alert('Karibu ' + data.fullName);
-           navigation.navigate('studentdrawer', { user: data });
-
+          navigation.navigate('studentdrawer', { user: data });
         } else {
           Alert.alert('Taarifa si sahihi');
         }
       })
       .catch(error => {
         console.error(error);
-        Alert.alert('Tatizo la mtandao');
+        Alert.alert('Tatizo: ' + error.message);
       });
   };
 

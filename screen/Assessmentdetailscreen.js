@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 
 const Assessmentdetailscreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-  const { assessmentId } = route.params;
+  const { assessmentId, studentId } = route.params;
 
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,11 +21,11 @@ const Assessmentdetailscreen = () => {
         setAssessment(response.data);
       } catch (error) {
         console.error("Error fetching assessment:", error);
+        Alert.alert("Error", "Imeshindikana kupata maelezo ya assessment. Jaribu tena baadaye.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchAssessment();
   }, [assessmentId]);
 
@@ -46,19 +45,37 @@ const Assessmentdetailscreen = () => {
     setSubmitting(true);
 
     try {
-      const response = await axios.post('http://192.168.43.33:8080/api/assessments/submit', {
-        assessmentId,
-        studentId: 1, // BADILISHA hii kama una login context
-        answers,
+      const formattedAnswers = {};
+      assessment.questions.forEach((q) => {
+        const selectedAnswerId = answers[q.id];
+        if (selectedAnswerId) {
+          formattedAnswers[q.id] = selectedAnswerId.toString();
+        }
       });
 
-      console.log('Majibu yaliyotumwa:', answers);
+      if (!studentId) {
+        Alert.alert("Tatizo", "Student ID haipatikani. Tafadhali ingia tena.");
+        setSubmitting(false);
+        return;
+      }
+
+      const response = await axios.post('http://192.168.43.33:8080/api/assessments/submit', {
+        assessmentId,
+        studentId,
+        answers: formattedAnswers,
+      });
+
+      console.log('Majibu yaliyotumwa:', formattedAnswers);
       console.log('Majibu kutoka kwa server:', response.data);
 
-      Alert.alert("Matokeo", response.data); // Message itoke kama ilivyo kwenye backend
+      Alert.alert(
+        "Matokeo",
+        response.data.message,
+        [{ text: "Sawa" }],
+        { cancelable: false }
+      );
 
       setAnswers({});
-      // navigation.navigate("LessonList"); // Optional
     } catch (error) {
       console.error('Kosa wakati wa kutuma majibu:', error);
       Alert.alert("Tatizo", "Imeshindikana kutuma majibu. Tafadhali jaribu tena.");

@@ -30,7 +30,7 @@ const Assessmentlistscreen = () => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.assessmentItem}
-      onPress={() => navigation.navigate("Assessmentdetailscreen", { assessmentId: item.id })}
+      onPress={() => navigation.navigate("Assessmentdetailscreen", { assessmentId: item.id, studentId: user.id })}
     >
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.level}>Kiwango: {item.level}</Text>

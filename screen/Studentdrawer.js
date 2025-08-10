@@ -3,8 +3,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Studentdashboard from './Studentdashboard';
 import Lessonscreen from './Lessonscreen';
-import Assessmentscreen from './Assessmentscreen'; // ya zamani
-import Assessmentlistscreen from './Assessmentlistscreen'; // mpya uliyoomba
+import Assessmentscreen from './Assessmentscreen';
+import Assessmentlistscreen from './Assessmentlistscreen';
 import Resultscreen from './Resultscreen';
 import Profilescreen from './Profilescreen';
 import Homescreen from './Homescreen';

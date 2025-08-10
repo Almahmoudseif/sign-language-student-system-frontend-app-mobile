@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 const Assessmentdetailscreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
+
   const { assessmentId, studentId } = route.params;
 
   const [assessment, setAssessment] = useState(null);
@@ -68,10 +70,19 @@ const Assessmentdetailscreen = () => {
       console.log('Majibu yaliyotumwa:', formattedAnswers);
       console.log('Majibu kutoka kwa server:', response.data);
 
+      const { message, newLevel } = response.data;
+
       Alert.alert(
         "Matokeo",
-        response.data.message,
-        [{ text: "Sawa" }],
+        message,
+        [
+          {
+            text: "Sawa",
+            onPress: () => {
+              navigation.navigate("Lessonscreen", { studentId, level: newLevel });
+            }
+          }
+        ],
         { cancelable: false }
       );
 

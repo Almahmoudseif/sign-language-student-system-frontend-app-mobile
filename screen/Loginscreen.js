@@ -1,3 +1,4 @@
+// Loginscreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
@@ -13,23 +14,17 @@ const Loginscreen = ({ navigation }) => {
 
     fetch('http://192.168.43.33:8080/api/users/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        registrationNumber: registrationNumber,
-        password: password
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ registrationNumber, password })
     })
       .then(res => {
-        if (!res.ok) {
-          throw new Error('Taarifa si sahihi');
-        }
+        if (!res.ok) throw new Error('Taarifa si sahihi');
         return res.json();
       })
       .then(data => {
         if (data && data.id) {
           Alert.alert('Karibu ' + data.fullName);
+          // Hapa tunapeleka user mzima kwenye drawer
           navigation.navigate('studentdrawer', { user: data });
         } else {
           Alert.alert('Taarifa si sahihi');

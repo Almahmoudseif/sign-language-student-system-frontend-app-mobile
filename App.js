@@ -11,6 +11,8 @@ import Assessmentdetail from './screen/Assessmentdetail';
 import Lessondetails from './screen/Lessondetails';
 import Assessmentlistscreen from './screen/Assessmentlistscreen';
 import Assessmentdetailscreen from './screen/Assessmentdetailscreen';
+import Historyscreen from './screen/Historyscreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Lessondetails" component={Lessondetails} />
         <Stack.Screen name="Assessmentlistscreen" component={Assessmentlistscreen} />
         <Stack.Screen name="Assessmentdetailscreen" component={Assessmentdetailscreen} />
+        <Stack.Screen name="Historyscreen" component={Historyscreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

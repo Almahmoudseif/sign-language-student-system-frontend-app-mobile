@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 const Studentdashboard = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const user = route.params?.user;
 
   return (
@@ -14,6 +15,13 @@ const Studentdashboard = () => {
           <Text style={styles.info}>Jina: {user.fullName}</Text>
           <Text style={styles.info}>Namba ya Usajili: {user.registrationNumber}</Text>
           <Text style={styles.info}>Barua Pepe: {user.email}</Text>
+
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => navigation.navigate('Historyscreen', { studentId: user.id })}
+          >
+            <Text style={styles.buttonText}>Lessons Zilizopitiwa</Text>
+          </TouchableOpacity>
         </>
       ) : (
         <Text style={styles.info}>Taarifa za mwanafunzi hazipo</Text>
@@ -40,5 +48,16 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 18,
     marginBottom: 10
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: '#007BFF',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16
   }
 });

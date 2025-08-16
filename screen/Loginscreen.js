@@ -1,10 +1,21 @@
 // Loginscreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 const Loginscreen = ({ navigation }) => {
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [password, setPassword] = useState('');
+  
+  // State za tour
+  const [step, setStep] = useState(0);
+  const [showTip, setShowTip] = useState(true);
+
+  const nextStep = () => {
+    if (step === 0) setStep(1);
+    else if (step === 1) setStep(2);
+    else setShowTip(false); // tour imekamilika
+  };
 
   const handleLogin = () => {
     if (!registrationNumber || !password) {
@@ -24,7 +35,6 @@ const Loginscreen = ({ navigation }) => {
       .then(data => {
         if (data && data.id) {
           Alert.alert('Karibu ' + data.fullName);
-          // Hapa tunapeleka user mzima kwenye drawer
           navigation.navigate('studentdrawer', { user: data });
         } else {
           Alert.alert('Taarifa si sahihi');
@@ -39,22 +49,47 @@ const Loginscreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ingia</Text>
-      <TextInput
-        placeholder="Registration Number"
-        style={styles.input}
-        value={registrationNumber}
-        onChangeText={setRegistrationNumber}
-      />
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Ingia</Text>
-      </TouchableOpacity>
+
+      <Tooltip
+        isVisible={showTip && step === 0}
+        content={<Text>Ingiza Registration Number yako hapa.</Text>}
+        placement="bottom"
+        onClose={nextStep}
+      >
+        <TextInput
+          placeholder="Registration Number"
+          style={styles.input}
+          value={registrationNumber}
+          onChangeText={setRegistrationNumber}
+        />
+      </Tooltip>
+
+      <Tooltip
+        isVisible={showTip && step === 1}
+        content={<Text>Ingiza password yako hapa.</Text>}
+        placement="bottom"
+        onClose={nextStep}
+      >
+        <TextInput
+          placeholder="Password"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </Tooltip>
+
+      <Tooltip
+        isVisible={showTip && step === 2}
+        content={<Text>Bofya hapa kuingia kwenye mfumo.</Text>}
+        placement="top"
+        onClose={nextStep}
+      >
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Ingia</Text>
+        </TouchableOpacity>
+      </Tooltip>
+
       <TouchableOpacity onPress={() => navigation.navigate('register')}>
         <Text style={styles.linkText}>Huna account? Jisajili</Text>
       </TouchableOpacity>

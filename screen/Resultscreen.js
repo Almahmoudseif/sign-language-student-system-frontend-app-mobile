@@ -1,65 +1,94 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import axios from 'axios';
 
-const Resultscreen = () => {
-  const route = useRoute();
-  const user = route.params?.user;
-
-  const [results, setResults] = useState([]);
+export default function Historyscreen({ route }) {
+  const { studentId } = route.params;  // tunatumia studentId kutoka navigation
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id) return;
-
-    fetch(`http://192.168.43.33:8080/api/results/student/${user.id}`)
-      .then(res => res.json())
-      .then(data => {
-        setResults(data);
+    const fetchHistory = async () => {
+      try {
+        // API inatarajiwa kurudisha results zenye lesson info ndani
+        const res = await axios.get(`http://192.168.43.33:8080/api/results/student/${studentId}`);
+        setHistory(res.data);
+      } catch (error) {
+        console.error('Error fetching history:', error);
+      } finally {
         setLoading(false);
-      })
-      .catch(error => {
-        console.error(error);
-        setLoading(false);
-      });
-  }, [user]);
+      }
+    };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.resultItem}>
-      <Text style={styles.examTitle}>{item.assessmentTitle}</Text>
-      <Text style={styles.score}>Alama: {item.score}</Text>
-      <Text style={styles.level}>Kiwango: {item.level}</Text>
-    </View>
-  );
+    fetchHistory();
+  }, [studentId]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="blue" style={{ marginTop: 50 }} />;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
+
+  if (history.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.emptyText}>Hakuna historia ya matokeo</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Matokeo Yako</Text>
       <FlatList
-        data={results}
+        data={history}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.title}>{item.lessonTitle || item.assessmentTitle || 'Lesson Title'}</Text>
+            <Text style={styles.detail}>Alama: {item.score ?? 'Haipo'}</Text>
+            <Text style={styles.detail}>Tarehe: {new Date(item.date).toLocaleDateString()}</Text>
+            {/* Unaweza kuongeza maelezo zaidi kama unataka */}
+          </View>
+        )}
       />
     </View>
   );
-};
-
-export default Resultscreen;
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  heading: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
-  resultItem: {
-    backgroundColor: '#f0f9ff',
-    padding: 15,
-    borderRadius: 5,
-    marginBottom: 12,
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    padding: 10,
   },
-  examTitle: { fontSize: 18, fontWeight: '600' },
-  score: { fontSize: 16 },
-  level: { fontSize: 16, color: '#555' },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  detail: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 5,
+  },
 });
+  

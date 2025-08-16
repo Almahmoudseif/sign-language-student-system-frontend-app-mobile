@@ -5,6 +5,7 @@ import {
 import axios from 'axios';
 import { Video } from 'expo-av';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 const Lessonscreen = () => {
   const navigation = useNavigation();
@@ -19,6 +20,10 @@ const Lessonscreen = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('images');
 
+  // Tooltips state
+  const [showTabTooltip, setShowTabTooltip] = useState(false);
+  const [showDetailTooltip, setShowDetailTooltip] = useState(false);
+
   useEffect(() => {
     if (!studentId || !level) {
       setError('Student ID au level haijapatikana.');
@@ -31,6 +36,7 @@ const Lessonscreen = () => {
         const res = await axios.get(`http://192.168.43.33:8080/api/lessons/student/${studentId}`);
         setLessons(res.data);
         setError('');
+        setShowTabTooltip(true); // show tooltip after lessons load
       } catch (err) {
         console.error('Error fetching lessons:', err);
         setError('Imeshindikana kupakia masomo.');
@@ -48,28 +54,42 @@ const Lessonscreen = () => {
 
   const renderImageItem = ({ item }) =>
     item.imageUrl && (
-      <View style={styles.card}>
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
-        <TouchableOpacity style={styles.button} onPress={() => goToDetails(item)}>
-          <Text style={styles.buttonText}>Tazama Maelezo</Text>
-        </TouchableOpacity>
-      </View>
+      <Tooltip
+        isVisible={showDetailTooltip}
+        content={<Text>Bofya "Tazama Maelezo" kuona maelezo ya somo</Text>}
+        placement="top"
+        onClose={() => setShowDetailTooltip(false)}
+      >
+        <View style={styles.card}>
+          <Image source={{ uri: item.imageUrl }} style={styles.image} />
+          <TouchableOpacity style={styles.button} onPress={() => { goToDetails(item); setShowDetailTooltip(true); }}>
+            <Text style={styles.buttonText}>Tazama Maelezo</Text>
+          </TouchableOpacity>
+        </View>
+      </Tooltip>
     );
 
   const renderVideoItem = ({ item }) =>
     item.videoUrl && (
-      <View style={styles.card}>
-        <Video
-          source={{ uri: item.videoUrl }}
-          style={styles.video}
-          useNativeControls
-          resizeMode="contain"
-          isLooping
-        />
-        <TouchableOpacity style={styles.button} onPress={() => goToDetails(item)}>
-          <Text style={styles.buttonText}>Tazama Maelezo</Text>
-        </TouchableOpacity>
-      </View>
+      <Tooltip
+        isVisible={showDetailTooltip}
+        content={<Text>Bofya "Tazama Maelezo" kuona maelezo ya somo</Text>}
+        placement="top"
+        onClose={() => setShowDetailTooltip(false)}
+      >
+        <View style={styles.card}>
+          <Video
+            source={{ uri: item.videoUrl }}
+            style={styles.video}
+            useNativeControls
+            resizeMode="contain"
+            isLooping
+          />
+          <TouchableOpacity style={styles.button} onPress={() => { goToDetails(item); setShowDetailTooltip(true); }}>
+            <Text style={styles.buttonText}>Tazama Maelezo</Text>
+          </TouchableOpacity>
+        </View>
+      </Tooltip>
     );
 
   if (loading) {
@@ -101,20 +121,27 @@ const Lessonscreen = () => {
     <View style={{ flex: 1 }}>
       <Text style={styles.title}>Masomo yako ya daraja: {level}</Text>
 
-      <View style={styles.tabs}>
-        <TouchableOpacity
-          onPress={() => setActiveTab('images')}
-          style={[styles.tabButton, activeTab === 'images' && styles.activeTab]}
-        >
-          <Text style={styles.tabText}>Picha</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setActiveTab('videos')}
-          style={[styles.tabButton, activeTab === 'videos' && styles.activeTab]}
-        >
-          <Text style={styles.tabText}>Video</Text>
-        </TouchableOpacity>
-      </View>
+      <Tooltip
+        isVisible={showTabTooltip}
+        content={<Text>Chagua kati ya Picha au Video kuona masomo yako kwa namna tofauti</Text>}
+        placement="bottom"
+        onClose={() => setShowTabTooltip(false)}
+      >
+        <View style={styles.tabs}>
+          <TouchableOpacity
+            onPress={() => setActiveTab('images')}
+            style={[styles.tabButton, activeTab === 'images' && styles.activeTab]}
+          >
+            <Text style={styles.tabText}>Picha</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setActiveTab('videos')}
+            style={[styles.tabButton, activeTab === 'videos' && styles.activeTab]}
+          >
+            <Text style={styles.tabText}>Video</Text>
+          </TouchableOpacity>
+        </View>
+      </Tooltip>
 
       <FlatList
         data={lessons}

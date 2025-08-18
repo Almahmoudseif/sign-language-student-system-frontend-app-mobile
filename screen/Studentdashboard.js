@@ -8,10 +8,10 @@ const Studentdashboard = () => {
   const navigation = useNavigation();
   const user = route.params?.user;
 
-  // State za tooltip
-  const [showTooltip1, setShowTooltip1] = useState(true); // kwa jina
-  const [showTooltip2, setShowTooltip2] = useState(false); // kwa namba ya usajili
-  const [showTooltip3, setShowTooltip3] = useState(false); // kwa button
+  // Tooltip states
+  const [showTooltip1, setShowTooltip1] = useState(true); // for name
+  const [showTooltip2, setShowTooltip2] = useState(false); // for registration number
+  const [showTooltip3, setShowTooltip3] = useState(false); // for button
 
   const handleNext = (current) => {
     if (current === 1) {
@@ -27,33 +27,33 @@ const Studentdashboard = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Karibu kwenye Dashboard</Text>
+      <Text style={styles.title}>Welcome to Your Dashboard</Text>
 
       {user ? (
         <>
           <Tooltip
             isVisible={showTooltip1}
-            content={<Text>Hapa ni jina lako la mwanafunzi</Text>}
+            content={<Text>This is your student name</Text>}
             placement="bottom"
             onClose={() => handleNext(1)}
           >
-            <Text style={styles.info}>Jina: {user.fullName}</Text>
+            <Text style={styles.info}>Name: {user.fullName}</Text>
           </Tooltip>
 
           <Tooltip
             isVisible={showTooltip2}
-            content={<Text>Hapa unaweza kuona namba yako ya usajili</Text>}
+            content={<Text>Here you can see your registration number</Text>}
             placement="bottom"
             onClose={() => handleNext(2)}
           >
-            <Text style={styles.info}>Namba ya Usajili: {user.registrationNumber}</Text>
+            <Text style={styles.info}>Registration Number: {user.registrationNumber}</Text>
           </Tooltip>
 
-          <Text style={styles.info}>Barua Pepe: {user.email}</Text>
+          <Text style={styles.info}>Email: {user.email}</Text>
 
           <Tooltip
             isVisible={showTooltip3}
-            content={<Text>Bofya hapa kuona lessons ulizopitia</Text>}
+            content={<Text>Click here to view the lessons you have taken</Text>}
             placement="top"
             onClose={() => handleNext(3)}
           >
@@ -61,12 +61,12 @@ const Studentdashboard = () => {
               style={styles.button} 
               onPress={() => navigation.navigate('Historyscreen', { studentId: user.id })}
             >
-              <Text style={styles.buttonText}>Lessons Zilizopitiwa</Text>
+              <Text style={styles.buttonText}>Taken Lessons</Text>
             </TouchableOpacity>
           </Tooltip>
         </>
       ) : (
-        <Text style={styles.info}>Taarifa za mwanafunzi hazipo</Text>
+        <Text style={styles.info}>Student information is not available</Text>
       )}
     </View>
   );

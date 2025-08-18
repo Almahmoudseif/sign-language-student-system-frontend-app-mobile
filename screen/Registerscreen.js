@@ -19,12 +19,12 @@ const Registerscreen = () => {
     if (step === 0) setStep(1);
     else if (step === 1) setStep(2);
     else if (step === 2) setStep(3);
-    else setShowTip(false); // tour imekamilika
+    else setShowTip(false); // tour completed
   };
 
   const handleRegister = async () => {
     if (!fullName || !email || !password) {
-      Alert.alert('Tafadhali jaza taarifa zote');
+      Alert.alert('Please fill in all fields');
       return;
     }
 
@@ -39,8 +39,8 @@ const Registerscreen = () => {
       const data = response.data;
 
       Alert.alert(
-        'Usajili Umefanikiwa!',
-        `Namba yako ya usajili ni: ${data.registrationNumber}`,
+        'Registration Successful!',
+        `Your registration number is: ${data.registrationNumber}`,
       );
 
       setTimeout(() => {
@@ -48,22 +48,22 @@ const Registerscreen = () => {
       }, 3000);
     } catch (error) {
       console.log(error);
-      Alert.alert('Usajili umeshindikana', 'Tafadhali hakikisha taarifa zako ni sahihi');
+      Alert.alert('Registration Failed', 'Please make sure your information is correct');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Jisajili</Text>
+      <Text style={styles.title}>Register</Text>
 
       <Tooltip
         isVisible={showTip && step === 0}
-        content={<Text>Ingiza jina lako kamili hapa.</Text>}
+        content={<Text>Enter your full name here.</Text>}
         placement="bottom"
         onClose={nextStep}
       >
         <TextInput
-          placeholder="Jina Kamili"
+          placeholder="Full Name"
           value={fullName}
           onChangeText={setFullName}
           style={styles.input}
@@ -72,12 +72,12 @@ const Registerscreen = () => {
 
       <Tooltip
         isVisible={showTip && step === 1}
-        content={<Text>Ingiza barua pepe yako hapa.</Text>}
+        content={<Text>Enter your email address here.</Text>}
         placement="bottom"
         onClose={nextStep}
       >
         <TextInput
-          placeholder="Barua Pepe"
+          placeholder="Email"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -87,12 +87,12 @@ const Registerscreen = () => {
 
       <Tooltip
         isVisible={showTip && step === 2}
-        content={<Text>Weka nenosiri yako hapa.</Text>}
+        content={<Text>Set your password here.</Text>}
         placement="bottom"
         onClose={nextStep}
       >
         <TextInput
-          placeholder="Nenosiri"
+          placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -102,17 +102,17 @@ const Registerscreen = () => {
 
       <Tooltip
         isVisible={showTip && step === 3}
-        content={<Text>Bofya hapa kujiandikisha kwenye mfumo.</Text>}
+        content={<Text>Tap here to register in the system.</Text>}
         placement="top"
         onClose={nextStep}
       >
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
-          <Text style={styles.buttonText}>Jisajili</Text>
+          <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
       </Tooltip>
 
       <TouchableOpacity onPress={() => navigation.navigate('login')}>
-        <Text style={styles.link}>Tayari una akaunti? Ingia hapa</Text>
+        <Text style={styles.link}>Already have an account? Login here</Text>
       </TouchableOpacity>
     </View>
   );

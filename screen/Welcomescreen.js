@@ -20,21 +20,21 @@ export default function Welcomescreen({ navigation }) {
       <View style={styles.overlay}>
         <Tooltip
           isVisible={showTip && step === 0}
-          content={<Text>Hapa ni ujumbe wa kukukaribisha kwenye mfumo wa kujifunza lugha ya alama.</Text>}
+          content={<Text>Welcome to the Sign Language Learning System.</Text>}
           placement="bottom"
           onClose={nextStep}
         >
-          <Text style={styles.title}>Karibu kwenye Mfumo wa Kujifunza Lugha ya Alama</Text>
+          <Text style={styles.title}>Welcome to the Sign Language Learning System</Text>
         </Tooltip>
 
         <Tooltip
           isVisible={showTip && step === 1}
-          content={<Text>Bofya hapa kuanza safari yako ya kujifunza.</Text>}
+          content={<Text>Tap here to start your learning journey.</Text>}
           placement="top"
           onClose={nextStep}
         >
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('login')}>
-            <Text style={styles.buttonText}>Anza Sasa</Text>
+            <Text style={styles.buttonText}>Start Now</Text>
           </TouchableOpacity>
         </Tooltip>
       </View>
@@ -52,6 +52,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   title: { fontSize: 26, color: '#fff', textAlign: 'center', marginBottom: 20 },
-  button: { backgroundColor: '#28a745', padding: 15, borderRadius: 10 },
+  button: { backgroundColor: 'hsla(117, 78%, 35%, 0.92)', padding: 15, borderRadius: 10 },
   buttonText: { color: '#fff', fontSize: 18, textAlign: 'center' }
 });

@@ -8,12 +8,12 @@ const Profilescreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Taarifa za Mwanafunzi</Text>
-      <Text style={styles.label}>Jina Kamili:</Text>
+      <Text style={styles.header}>Student Information</Text>
+      <Text style={styles.label}>Full Name:</Text>
       <Text style={styles.value}>{user?.fullName}</Text>
       <Text style={styles.label}>Email:</Text>
       <Text style={styles.value}>{user?.email}</Text>
-      <Text style={styles.label}>Nambari ya Usajili:</Text>
+      <Text style={styles.label}>Registration Number:</Text>
       <Text style={styles.value}>{user?.registrationNumber}</Text>
     </View>
   );

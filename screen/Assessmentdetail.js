@@ -34,15 +34,14 @@ const Assessmentdetail = () => {
   };
 
   const handleSubmit = async () => {
-    // Optional: hapa unaweza kutuma kwa backend
-    console.log("Majibu yaliyotumwa:", selectedAnswers);
+    console.log("Submitted answers:", selectedAnswers);
 
     if (Object.keys(selectedAnswers).length !== assessment.questions.length) {
-      Alert.alert("Tafadhali jibu maswali yote kabla ya kutuma.");
+      Alert.alert("Please answer all questions before submitting.");
       return;
     }
 
-    Alert.alert("Umefanikiwa kutuma majibu yako!", "Ahsante kwa kufanya assessment.");
+    Alert.alert("Submission Successful", "Thank you for completing the assessment.");
   };
 
   const renderAnswers = (question) => {
@@ -68,7 +67,7 @@ const Assessmentdetail = () => {
       {question.answers?.length > 0 ? (
         renderAnswers(question)
       ) : (
-        <Text style={styles.noAnswers}>Hakuna majibu yaliyopatikana.</Text>
+        <Text style={styles.noAnswers}>No answers available.</Text>
       )}
     </View>
   );
@@ -77,7 +76,7 @@ const Assessmentdetail = () => {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="green" />
-        <Text>Inapakia assessment...</Text>
+        <Text>Loading assessment...</Text>
       </View>
     );
   }
@@ -85,14 +84,14 @@ const Assessmentdetail = () => {
   if (!assessment || !assessment.questions || assessment.questions.length === 0) {
     return (
       <View style={styles.center}>
-        <Text style={styles.noQuestions}>Hakuna maswali yaliyopatikana kwa assessment hii.</Text>
+        <Text style={styles.noQuestions}>No questions found for this assessment.</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Maswali ya: {assessment.title}</Text>
+      <Text style={styles.title}>Questions for: {assessment.title}</Text>
       <FlatList
         data={assessment.questions}
         keyExtractor={(item) => item.id.toString()}
@@ -101,7 +100,7 @@ const Assessmentdetail = () => {
       />
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Tuma Majibu</Text>
+        <Text style={styles.submitButtonText}>Submit Answers</Text>
       </TouchableOpacity>
     </View>
   );

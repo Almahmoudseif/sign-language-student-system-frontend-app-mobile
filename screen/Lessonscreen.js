@@ -26,7 +26,7 @@ const Lessonscreen = () => {
 
   useEffect(() => {
     if (!studentId || !level) {
-      setError('Student ID au level haijapatikana.');
+      setError('Student ID or level not found.');
       setLoading(false);
       return;
     }
@@ -39,7 +39,7 @@ const Lessonscreen = () => {
         setShowTabTooltip(true); // show tooltip after lessons load
       } catch (err) {
         console.error('Error fetching lessons:', err);
-        setError('Imeshindikana kupakia masomo.');
+        setError('Failed to load lessons.');
       } finally {
         setLoading(false);
       }
@@ -56,14 +56,14 @@ const Lessonscreen = () => {
     item.imageUrl && (
       <Tooltip
         isVisible={showDetailTooltip}
-        content={<Text>Bofya "Tazama Maelezo" kuona maelezo ya somo</Text>}
+        content={<Text>Tap "View Details" to see lesson information</Text>}
         placement="top"
         onClose={() => setShowDetailTooltip(false)}
       >
         <View style={styles.card}>
           <Image source={{ uri: item.imageUrl }} style={styles.image} />
           <TouchableOpacity style={styles.button} onPress={() => { goToDetails(item); setShowDetailTooltip(true); }}>
-            <Text style={styles.buttonText}>Tazama Maelezo</Text>
+            <Text style={styles.buttonText}>View Details</Text>
           </TouchableOpacity>
         </View>
       </Tooltip>
@@ -73,7 +73,7 @@ const Lessonscreen = () => {
     item.videoUrl && (
       <Tooltip
         isVisible={showDetailTooltip}
-        content={<Text>Bofya "Tazama Maelezo" kuona maelezo ya somo</Text>}
+        content={<Text>Tap "View Details" to see lesson information</Text>}
         placement="top"
         onClose={() => setShowDetailTooltip(false)}
       >
@@ -86,7 +86,7 @@ const Lessonscreen = () => {
             isLooping
           />
           <TouchableOpacity style={styles.button} onPress={() => { goToDetails(item); setShowDetailTooltip(true); }}>
-            <Text style={styles.buttonText}>Tazama Maelezo</Text>
+            <Text style={styles.buttonText}>View Details</Text>
           </TouchableOpacity>
         </View>
       </Tooltip>
@@ -96,7 +96,7 @@ const Lessonscreen = () => {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#003366" />
-        <Text>Inapakia somo...</Text>
+        <Text>Loading lessons...</Text>
       </View>
     );
   }
@@ -112,18 +112,18 @@ const Lessonscreen = () => {
   if (lessons.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text>Hakuna masomo kwa daraja hili.</Text>
+        <Text>No lessons found for this level.</Text>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.title}>Masomo yako ya daraja: {level}</Text>
+      <Text style={styles.title}>Your lessons for level: {level}</Text>
 
       <Tooltip
         isVisible={showTabTooltip}
-        content={<Text>Chagua kati ya Picha au Video kuona masomo yako kwa namna tofauti</Text>}
+        content={<Text>Select Images or Videos to view your lessons in different formats</Text>}
         placement="bottom"
         onClose={() => setShowTabTooltip(false)}
       >
@@ -132,13 +132,13 @@ const Lessonscreen = () => {
             onPress={() => setActiveTab('images')}
             style={[styles.tabButton, activeTab === 'images' && styles.activeTab]}
           >
-            <Text style={styles.tabText}>Picha</Text>
+            <Text style={styles.tabText}>Images</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveTab('videos')}
             style={[styles.tabButton, activeTab === 'videos' && styles.activeTab]}
           >
-            <Text style={styles.tabText}>Video</Text>
+            <Text style={styles.tabText}>Videos</Text>
           </TouchableOpacity>
         </View>
       </Tooltip>

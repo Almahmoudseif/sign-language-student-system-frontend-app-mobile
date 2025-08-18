@@ -33,7 +33,7 @@ const Assessmentscreen = () => {
       onPress={() => navigation.navigate("Assessmentdetail", { assessmentId: item.id })}
     >
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.level}>Kiwango: {item.level}</Text>
+      <Text style={styles.level}>Level: {item.level}</Text>
       <Text style={styles.description}>{item.description}</Text>
     </TouchableOpacity>
   );
@@ -44,9 +44,9 @@ const Assessmentscreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Mitihani</Text>
+      <Text style={styles.heading}>Assessments</Text>
       {assessments.length === 0 ? (
-        <Text style={{textAlign: 'center', marginTop: 20}}>Hakuna mitihani iliyopatikana.</Text>
+        <Text style={{textAlign: 'center', marginTop: 20}}>No assessments found.</Text>
       ) : (
         <FlatList
           data={assessments}

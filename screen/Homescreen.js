@@ -8,7 +8,7 @@ const Homescreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Karibu, {user?.fullName}!</Text>
+      <Text style={styles.title}>Welcome, {user?.fullName}!</Text>
       <Text style={styles.info}>Registration Number: {user?.registrationNumber}</Text>
       <Text style={styles.info}>Email: {user?.email}</Text>
       <Text style={styles.info}>Role: {user?.role}</Text>

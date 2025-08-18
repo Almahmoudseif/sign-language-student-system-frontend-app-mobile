@@ -9,7 +9,7 @@ const Lessondetails = ({ route }) => {
     <View style={styles.container}>
       <Text style={styles.title}>{lesson.title}</Text>
 
-      {/* Video ikiwa ipo */}
+      {/* Video if available */}
       {lesson.videoUrl ? (
         <Video
           source={{ uri: lesson.videoUrl }}
@@ -19,7 +19,7 @@ const Lessondetails = ({ route }) => {
           style={styles.video}
         />
       ) : (
-        // Ikiwa video haipo, angalia kama kuna picha
+        // If video not available, show image if exists
         lesson.imageUrl && (
           <Image source={{ uri: lesson.imageUrl }} style={styles.image} />
         )

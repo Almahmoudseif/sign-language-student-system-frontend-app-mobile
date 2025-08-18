@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 
 const Assessmentdetailscreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-
   const { assessmentId, studentId } = route.params;
 
   const [assessment, setAssessment] = useState(null);
@@ -23,7 +21,7 @@ const Assessmentdetailscreen = () => {
         setAssessment(response.data);
       } catch (error) {
         console.error("Error fetching assessment:", error);
-        Alert.alert("Error", "Imeshindikana kupata maelezo ya assessment. Jaribu tena baadaye.");
+        Alert.alert("Error", "Failed to fetch assessment details. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -40,7 +38,7 @@ const Assessmentdetailscreen = () => {
 
   const handleSubmit = async () => {
     if (Object.keys(answers).length !== assessment.questions.length) {
-      Alert.alert("Tafadhali jibu maswali yote kabla ya kutuma.");
+      Alert.alert("Please answer all questions before submitting.");
       return;
     }
 
@@ -56,7 +54,7 @@ const Assessmentdetailscreen = () => {
       });
 
       if (!studentId) {
-        Alert.alert("Tatizo", "Student ID haipatikani. Tafadhali ingia tena.");
+        Alert.alert("Error", "Student ID not found. Please log in again.");
         setSubmitting(false);
         return;
       }
@@ -67,29 +65,19 @@ const Assessmentdetailscreen = () => {
         answers: formattedAnswers,
       });
 
-      console.log('Majibu yaliyotumwa:', formattedAnswers);
-      console.log('Majibu kutoka kwa server:', response.data);
-
-      const { message, newLevel } = response.data;
+      const { message } = response.data;
 
       Alert.alert(
-        "Matokeo",
+        "Result",
         message,
-        [
-          {
-            text: "Sawa",
-            onPress: () => {
-              navigation.navigate("Lessonscreen", { studentId, level: newLevel });
-            }
-          }
-        ],
+        [{ text: "OK" }],
         { cancelable: false }
       );
 
       setAnswers({});
     } catch (error) {
-      console.error('Kosa wakati wa kutuma majibu:', error);
-      Alert.alert("Tatizo", "Imeshindikana kutuma majibu. Tafadhali jaribu tena.");
+      console.error('Error submitting answers:', error);
+      Alert.alert("Error", "Failed to submit answers. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -118,7 +106,7 @@ const Assessmentdetailscreen = () => {
       {question.answers?.length > 0 ? (
         renderAnswers(question)
       ) : (
-        <Text style={styles.noAnswers}>Hakuna majibu yaliyopatikana.</Text>
+        <Text style={styles.noAnswers}>No answers available.</Text>
       )}
     </View>
   );
@@ -127,7 +115,7 @@ const Assessmentdetailscreen = () => {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="green" />
-        <Text>Inapakia assessment...</Text>
+        <Text>Loading assessment...</Text>
       </View>
     );
   }
@@ -135,14 +123,14 @@ const Assessmentdetailscreen = () => {
   if (!assessment || !assessment.questions || assessment.questions.length === 0) {
     return (
       <View style={styles.center}>
-        <Text style={styles.noQuestions}>Hakuna maswali yaliyopatikana kwa assessment hii.</Text>
+        <Text style={styles.noQuestions}>No questions found for this assessment.</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Maswali ya: {assessment.title}</Text>
+      <Text style={styles.title}>Questions for: {assessment.title}</Text>
       <FlatList
         data={assessment.questions}
         keyExtractor={(item) => item.id.toString()}
@@ -156,7 +144,7 @@ const Assessmentdetailscreen = () => {
         disabled={submitting}
       >
         <Text style={styles.submitButtonText}>
-          {submitting ? "Inatuma..." : "Tuma Majibu"}
+          {submitting ? "Submitting..." : "Submit Answers"}
         </Text>
       </TouchableOpacity>
     </View>

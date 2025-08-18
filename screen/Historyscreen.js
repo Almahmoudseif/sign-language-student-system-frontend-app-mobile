@@ -11,13 +11,11 @@ export default function Historyscreen({ route }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Piga requests mbili: matokeo yote na lessons zilizofaulu
         const [resultsRes, passedRes] = await Promise.all([
           axios.get(`http://192.168.43.33:8080/api/results/student/${studentId}`),
           axios.get(`http://192.168.43.33:8080/api/results/student/${studentId}/passed-lessons`)
         ]);
 
-        // Hifadhi response state
         setResults(resultsRes.data);
         setPassedLessons(passedRes.data);
       } catch (error) {
@@ -41,43 +39,43 @@ export default function Historyscreen({ route }) {
   if (results.length === 0 && passedLessons.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>Hakuna historia ya matokeo au lessons zilizofaulu</Text>
+        <Text style={styles.emptyText}>No history of results or passed lessons</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Matokeo Yote</Text>
+      <Text style={styles.sectionTitle}>All Results</Text>
       <FlatList
         data={results}
         keyExtractor={(item) => 'result-' + item.id.toString()}
-        ListEmptyComponent={<Text style={styles.emptyText}>Hakuna matokeo</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>No results found</Text>}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.title}>{item.assessment?.title || 'Assessment Title'}</Text>
-            <Text style={styles.detail}>Alama: {item.score ?? 'Haipo'}</Text>
+            <Text style={styles.detail}>Score: {item.score ?? 'N/A'}</Text>
             <Text style={styles.detail}>
-              Tarehe: {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'Haipo'}
+              Date: {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}
             </Text>
-            <Text style={styles.detail}>Grade: {item.grade ?? 'Haipo'}</Text>
+            <Text style={styles.detail}>Grade: {item.grade ?? 'N/A'}</Text>
           </View>
         )}
       />
 
-      <Text style={styles.sectionTitle}>Lessons Zilizofaulu</Text>
+      <Text style={styles.sectionTitle}>Passed Lessons</Text>
       <FlatList
         data={passedLessons}
         keyExtractor={(item) => 'passed-' + item.lessonId.toString()}
-        ListEmptyComponent={<Text style={styles.emptyText}>Hakuna lessons zilizofaulu</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>No passed lessons</Text>}
         renderItem={({ item }) => (
           <View style={styles.cardPassed}>
             <Text style={styles.title}>{item.lessonTitle || 'Lesson Title'}</Text>
-            <Text style={styles.detail}>Alama: {item.score ?? 'Haipo'}</Text>
+            <Text style={styles.detail}>Score: {item.score ?? 'N/A'}</Text>
             <Text style={styles.detail}>
-              Tarehe: {item.datePassed ? new Date(item.datePassed).toLocaleDateString() : 'Haipo'}
+              Date: {item.datePassed ? new Date(item.datePassed).toLocaleDateString() : 'N/A'}
             </Text>
-            <Text style={styles.detail}>Grade: {item.grade ?? 'Haipo'}</Text>
+            <Text style={styles.detail}>Grade: {item.grade ?? 'N/A'}</Text>
           </View>
         )}
       />
